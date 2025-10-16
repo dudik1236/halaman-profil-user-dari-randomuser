@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>RandomUser • Profile (Online + Offline) — Stylish</title>
-  <meta name="description" content="Halaman profil dinamis dari RandomUser API dengan desain atraktif, animasi, tema gelap/terang, filter negara (NAT), badge gender/umur, fallback offline, timeout+retry, dan self-test. Cocok untuk GitHub Pages/Netlify/Vercel." />
+  <meta name="description" content="Halaman profil dinamis dari RandomUser API dengan desain atraktif, animasi, tema, filter NAT, badge gender/umur, offline fallback, timeout+retry, dan self-test. Siap GitHub Pages/Netlify/Vercel." />
   <meta property="og:title" content="RandomUser Stylish Profile" />
   <meta property="og:description" content="Profil dinamis dari RandomUser API + offline fallback. Coba sekarang!" />
   <meta property="og:type" content="website" />
@@ -14,37 +14,31 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwind.config = {
-      theme: { extend: { fontFamily: { sans: ["Inter", "ui-sans-serif", "system-ui"] }, colors: { brand: { 50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3', 900: '#312e81' } } } }, darkMode: 'class'
-    }
+    tailwind.config = { theme: { extend: { fontFamily: { sans: ["Inter","ui-sans-serif","system-ui"] }, colors: { brand: { 50:'#eef2ff',100:'#e0e7ff',200:'#c7d2fe',300:'#a5b4fc',400:'#818cf8',500:'#6366f1',600:'#4f46e5',700:'#4338ca',800:'#3730a3',900:'#312e81' } } } }, darkMode:'class' }
   </script>
   <style>
     :root { --blob1:#7c5cff; --blob2:#24d6d9; }
-    .hero-bg { position: fixed; inset: 0; z-index: -1; overflow: hidden; }
-    .blob { position: absolute; filter: blur(40px); opacity:.35; transform: translate(-50%, -50%); border-radius: 50%; }
-    .blob.a { width: 500px; height: 500px; background: var(--blob1); top: -10%; left: 10%; animation: floatA 14s ease-in-out infinite; }
-    .blob.b { width: 650px; height: 650px; background: var(--blob2); top: 15%; left: 85%; animation: floatB 18s ease-in-out infinite; }
-    .blob.c { width: 520px; height: 520px; background: #ff7ab6; top: 95%; left: 10%; animation: floatC 20s ease-in-out infinite; }
-    @keyframes floatA { 0%{transform:translate(-50%,-50%) scale(1)} 50%{transform:translate(-48%,-47%) scale(1.15)} 100%{transform:translate(-50%,-50%) scale(1)} }
-    @keyframes floatB { 0%{transform:translate(-50%,-50%) scale(1)} 50%{transform:translate(-52%,-53%) scale(1.08)} 100%{transform:translate(-50%,-50%) scale(1)} }
-    @keyframes floatC { 0%{transform:translate(-50%,-50%) scale(1)} 50%{transform:translate(-47%,-52%) scale(1.12)} 100%{transform:translate(-50%,-50%) scale(1)} }
-    .glass { backdrop-filter: blur(10px); background: rgba(255,255,255,.65); }
-    .dark .glass { background: rgba(17,24,39,.55); }
-    .tilt { transform-style: preserve-3d; transition: transform .15s ease; }
-    .tilt:hover { transform: perspective(900px) rotateX(2deg) rotateY(-2deg) translateY(-2px); }
-    .kbd{ border:1px solid #cbd5e1; border-bottom-width:2px; border-radius:.5rem; padding:.15rem .4rem; font-size:.75rem; background:#fff; }
-    .dark .kbd{ background:#0f172a; border-color:#334155; }
-    .shimmer{ background: linear-gradient(100deg, rgba(148,163,184,.2) 20%, rgba(148,163,184,.4) 40%, rgba(148,163,184,.2) 60%); background-size: 200% 100%; animation: shimmer 1.1s infinite; }
-    @keyframes shimmer{0%{background-position: 200% 0} 100%{background-position: -200% 0}}
-    #confetti { pointer-events:none; position: fixed; inset: 0; z-index: 40; display:none; }
+    .hero-bg{position:fixed;inset:0;z-index:-1;overflow:hidden}
+    .blob{position:absolute;filter:blur(40px);opacity:.35;transform:translate(-50%,-50%);border-radius:50%}
+    .blob.a{width:500px;height:500px;background:var(--blob1);top:-10%;left:10%;animation:floatA 14s ease-in-out infinite}
+    .blob.b{width:650px;height:650px;background:var(--blob2);top:15%;left:85%;animation:floatB 18s ease-in-out infinite}
+    .blob.c{width:520px;height:520px;background:#ff7ab6;top:95%;left:10%;animation:floatC 20s ease-in-out infinite}
+    @keyframes floatA{0%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-48%,-47%) scale(1.15)}100%{transform:translate(-50%,-50%) scale(1)}}
+    @keyframes floatB{0%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-52%,-53%) scale(1.08)}100%{transform:translate(-50%,-50%) scale(1)}}
+    @keyframes floatC{0%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-47%,-52%) scale(1.12)}100%{transform:translate(-50%,-50%) scale(1)}}
+    .glass{backdrop-filter:blur(10px);background:rgba(255,255,255,.65)}
+    .dark .glass{background:rgba(17,24,39,.55)}
+    .tilt{transform-style:preserve-3d;transition:transform .15s ease}
+    .tilt:hover{transform:perspective(900px) rotateX(2deg) rotateY(-2deg) translateY(-2px)}
+    .kbd{border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:.5rem;padding:.15rem .4rem;font-size:.75rem;background:#fff}
+    .dark .kbd{background:#0f172a;border-color:#334155}
+    .shimmer{background:linear-gradient(100deg,rgba(148,163,184,.2) 20%,rgba(148,163,184,.4) 40%,rgba(148,163,184,.2) 60%);background-size:200% 100%;animation:shimmer 1.1s infinite}
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    #confetti{pointer-events:none;position:fixed;inset:0;z-index:40;display:none}
   </style>
 </head>
 <body class="min-h-screen font-sans bg-gradient-to-br from-slate-50 via-white to-indigo-50 text-slate-800 dark:from-slate-900 dark:via-slate-950 dark:to-indigo-950 dark:text-slate-100 transition-colors">
-  <div class="hero-bg">
-    <div class="blob a"></div>
-    <div class="blob b"></div>
-    <div class="blob c"></div>
-  </div>
+  <div class="hero-bg"><div class="blob a"></div><div class="blob b"></div><div class="blob c"></div></div>
   <canvas id="confetti"></canvas>
 
   <header class="sticky top-0 z-30 border-b border-slate-200/60 dark:border-slate-700/50 bg-white/70 dark:bg-slate-900/60 backdrop-blur">
@@ -168,231 +162,8 @@
       b.textContent = msg; b.classList.remove('hidden');
     }
 
-    // ---------- Confetti (simple) ----------
+    // ---------- Confetti ----------
     function burstConfetti() {
       const canvas = $('confetti'); const ctx = canvas.getContext('2d');
       const W = canvas.width = innerWidth; const H = canvas.height = innerHeight;
-      const N = 140; const parts = Array.from({length:N}, () => ({
-        x: Math.random()*W, y: -20-Math.random()*H*0.2, r: 4+Math.random()*3, s: 1+Math.random()*2,
-        c: `hsl(${Math.random()*360},90%,60%)`, a: 1
-      }));
-      canvas.style.display = 'block';
-      let t=0; const anim = () => {
-        t++; ctx.clearRect(0,0,W,H);
-        parts.forEach(p=>{ p.y += p.s*2; p.x += Math.sin((p.y+p.r)*.02)*1.2; p.a -= .007; ctx.globalAlpha = Math.max(p.a,0); ctx.fillStyle = p.c; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); });
-        if (t<220) requestAnimationFrame(anim); else canvas.style.display = 'none';
-      };
-      anim();
-    }
-
-    // ---------- Offline mocks (tests & restricted envs) ----------
-    const MOCK_USERS = [
-      // Test Case 1
-      { results: [{
-        gender: "male",
-        name: { title: "Mr", first: "Adi", last: "Santoso" },
-        location: { street: { number: 12, name: "Jalan Merpati" }, city: "Bogor", state: "Jawa Barat", country: "Indonesia", postcode: 16111, timezone: { offset: "+07:00", description: "Jakarta" } },
-        email: "adi.santoso@example.com",
-        login: { uuid: "11111111-2222-3333-4444-555555555555", username: "adisantoso" },
-        dob: { date: "1999-02-15T08:20:00.000Z", age: 26 },
-        registered: { date: "2022-06-01T10:00:00.000Z" },
-        phone: "+62-21-555-0000", cell: "+62-815-0000-0000",
-        picture: { large: "https://randomuser.me/api/portraits/men/75.jpg" },
-        nat: "ID"
-      }]},
-      // Test Case 2 (edge fields)
-      { results: [{
-        gender: "female",
-        name: { title: "Ms", first: "Jane", last: "Doe" },
-        location: { street: { number: 100, name: "Main St" }, city: "Seattle", state: "Washington", country: "United States", postcode: "98101", timezone: { offset: "-07:00", description: "Pacific Time" } },
-        email: "jane.doe@example.com",
-        login: { uuid: "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee", username: "janed" },
-        dob: { date: "1990-07-10T00:00:00.000Z", age: 35 },
-        registered: { date: "2015-03-05T00:00:00.000Z" },
-        phone: "+1-206-555-1234", cell: "",
-        picture: { large: "https://randomuser.me/api/portraits/women/47.jpg" },
-        nat: "US"
-      }]},
-      // Test Case 3 (no NAT, no picture -> robustness)
-      { results: [{
-        gender: "female",
-        name: { title: "Mrs", first: "Siti", last: "Ayu" },
-        location: { street: { number: 9, name: "Jl. Melati" }, city: "Bandung", state: "Jawa Barat", country: "Indonesia", postcode: 40115, timezone: { offset: "+07:00", description: "WIB" } },
-        email: "siti.ayu@example.com",
-        login: { uuid: "12345678-90ab-cdef-1234-567890abcdef", username: "sitiayu" },
-        dob: { date: "1998-11-23T00:00:00.000Z", age: 26 },
-        registered: { date: "2020-08-12T00:00:00.000Z" },
-        phone: "+62-22-555-7777", cell: "+62-812-0000-0000",
-        picture: { large: "" },
-        nat: ""
-      }]}
-    ];
-
-    // ---------- Fetch with timeout & retries ----------
-    async function fetchWithTimeout(url, { timeout = 6000, retries = 2 } = {}) {
-      let lastError;
-      for (let attempt = 0; attempt <= retries; attempt++) {
-        const ctl = new AbortController();
-        const t = setTimeout(() => ctl.abort(), timeout);
-        try {
-          const res = await fetch(url, { signal: ctl.signal, cache: 'no-store' });
-          clearTimeout(t);
-          if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-          return await res.json();
-        } catch (err) {
-          clearTimeout(t); lastError = err;
-          await new Promise(r => setTimeout(r, 300 * (attempt + 1)));
-        }
-      }
-      throw lastError || new Error('Failed to fetch');
-    }
-
-    function buildNatParam() {
-      const val = $('natSelect')?.value || '';
-      if (!val) return 'us,gb,fr,au,ca,id';
-      return val; // single code
-    }
-
-    async function getUserOnline() {
-      const natParam = buildNatParam();
-      const url = `https://randomuser.me/api/?nat=${encodeURIComponent(natParam)}&inc=gender,name,location,email,login,phone,cell,dob,registered,picture,nat&noinfo&results=1`;
-      const data = await fetchWithTimeout(url, { timeout: 6000, retries: 2 });
-      const u = data.results?.[0]; if (!u) throw new Error('Empty results');
-      return { raw: data, u };
-    }
-    function getUserOffline(index = 0) { const data = MOCK_USERS[index % MOCK_USERS.length]; return { raw: data, u: data.results[0] }; }
-
-    function showBadges(u){
-      const g = (u.gender||'').toLowerCase();
-      const gender = g === 'male' ? 'Laki-laki' : g === 'female' ? 'Perempuan' : (u.gender||'-');
-      const gb = $('genderBadge'); const ab = $('ageBadge');
-      gb.textContent = gender; ab.textContent = `${u.dob?.age??'?'} th`;
-      gb.className = `text-xs px-2 py-1 rounded-full border ${g==='male'?'border-blue-300 bg-blue-100/60 text-blue-900 dark:border-blue-600/60 dark:bg-blue-500/10 dark:text-blue-300':'border-pink-300 bg-pink-100/60 text-pink-900 dark:border-pink-600/60 dark:bg-pink-500/10 dark:text-pink-300'}`;
-      ab.className = `text-xs px-2 py-1 rounded-full border border-emerald-300 bg-emerald-100/60 text-emerald-900 dark:border-emerald-600/60 dark:bg-emerald-500/10 dark:text-emerald-300`;
-      gb.classList.remove('hidden'); ab.classList.remove('hidden');
-    }
-
-    function render({ raw, u }, { celebrate=false } = {}) {
-      document.documentElement.style.setProperty('--blob1', u.nat ? '#4f46e5' : '#7c5cff');
-      document.documentElement.style.setProperty('--blob2', u.nat ? '#06b6d4' : '#24d6d9');
-
-      $('avatar').src = u.picture?.large || u.picture?.medium || '';
-      $('avatar').alt = `${u?.name?.first ?? ''} ${u?.name?.last ?? ''}`.trim() || 'avatar';
-      $('avatar').classList.remove('hidden'); $('avatarSkel').classList.add('hidden');
-
-      if (u.nat) { $('coverFlag').src = flagUrl(u.nat); $('coverFlag').classList.remove('hidden'); }
-      else { $('coverFlag').classList.add('hidden'); }
-
-      setText('name', `${u.name?.title ?? ''} ${u.name?.first ?? ''} ${u.name?.last ?? ''}`.trim());
-      setText('username', `@${u.login?.username ?? 'unknown'}`);
-
-      const dob = `${u.dob?.date ? formatDate(u.dob.date) : '-'} • ${u.dob?.age ?? '?'} th`;
-      setText('email', u.email ?? '-');
-      setText('phone', [u.phone, u.cell].filter(Boolean).join(' • '));
-      setText('dob', dob);
-      setText('timezone', `${u.location?.timezone?.offset ?? ''} ${u.location?.timezone?.description ?? ''}`.trim());
-
-      $('btnMail').href = `mailto:${encodeURIComponent(u.email ?? '')}?subject=${encodeURIComponent('Hello ' + (u.name?.first ?? ''))}`;
-      const q = encodeURIComponent(`${u.location?.street?.number ?? ''} ${u.location?.street?.name ?? ''}, ${u.location?.city ?? ''}, ${u.location?.state ?? ''}, ${u.location?.country ?? ''}, ${u.location?.postcode ?? ''}`);
-      $('btnMap').href = `https://www.google.com/maps/search/?api=1&query=${q}`;
-
-      const tmpl = $('aboutTmpl').innerHTML
-        .replace('{{first}}', u.name?.first ?? '')
-        .replace('{{last}}', u.name?.last ?? '')
-        .replace('{{gender}}', u.gender ?? '')
-        .replace('{{city}}', u.location?.city ?? '')
-        .replace('{{country}}', u.location?.country ?? '')
-        .replace('{{tz}}', `${u.location?.timezone?.offset ?? ''} ${u.location?.timezone?.description ?? ''}`.trim())
-        .replace('{{age}}', u.dob?.age ?? '')
-        .replace('{{user}}', u.login?.username ?? '');
-      $('about').innerHTML = tmpl;
-
-      setText('address', `${u.location?.street?.number ?? ''} ${u.location?.street?.name ?? ''}, ${u.location?.city ?? ''}, ${u.location?.state ?? ''}, ${u.location?.country ?? ''} ${u.location?.postcode ?? ''}`.replace(/\s+,/g, ',').replace(/\s+/g,' ').trim());
-      setText('uuid', u.login?.uuid ?? '-');
-      setText('registered', u.registered?.date ? formatDate(u.registered.date) : '-');
-      setText('nat', u.nat ?? '-');
-      $('raw').textContent = JSON.stringify(raw, null, 2);
-
-      showBadges(u);
-      if (celebrate) burstConfetti();
-    }
-
-    async function loadUser({ mode = 'auto', offlineIndex = 0 } = {}) {
-      toggleLoading(true); $('banner').classList.add('hidden');
-      try {
-        if (mode === 'offline') {
-          const data = getUserOffline(offlineIndex); render(data); banner('OFFLINE demo user ditampilkan (tidak butuh internet).', 'warn');
-        } else {
-          const urlParams = new URLSearchParams(location.search);
-          const forceOffline = urlParams.has('offline') || !navigator.onLine || location.protocol === 'file:';
-          if (forceOffline) { const data = getUserOffline(offlineIndex); render(data); banner('Mode offline aktif. Tambahkan parameter ?online=1 setelah deploy untuk uji live.', 'warn'); }
-          else { const data = await getUserOnline(); render(data, { celebrate: true }); banner('Data live berhasil dimuat dari RandomUser API.', 'info'); }
-        }
-      } catch (err) {
-        console.error(err); const data = getUserOffline(offlineIndex); render(data); banner('Gagal mengambil data online — beralih ke OFFLINE demo. Error: '+(err?.message||err), 'error');
-      } finally { toggleLoading(false); }
-    }
-
-    // Copy/Download/Share/Link
-    $('btnCopy').addEventListener('click', () => { const text = $('raw').textContent; navigator.clipboard?.writeText(text).then(()=>alert('JSON disalin')).catch(()=>alert('Gagal menyalin')); });
-    $('btnDownload').addEventListener('click', () => { const blob = new Blob([$('raw').textContent], { type: 'application/json' }); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='randomuser.json'; a.click(); URL.revokeObjectURL(a.href); });
-
-    $('btnShare').addEventListener('click', async () => {
-      const url = location.href; const text = 'Cek profil RandomUser ini:'; const data = { title: 'RandomUser Profile', text, url };
-      if (location.protocol === 'https:' && navigator.share) { try { await navigator.share(data); return; } catch (_) {} }
-      const wa = `https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`; const win = window.open(wa, '_blank', 'noopener');
-      if (!win) { try { await navigator.clipboard?.writeText(`${text} ${url}`); alert('URL halaman disalin (fallback)'); } catch(e) { alert('Gagal membuka share & menyalin URL'); } }
-    });
-
-    $('btnCopyLink').addEventListener('click', async () => {
-      try { await navigator.clipboard.writeText(location.href); alert('Link halaman disalin'); } catch { alert('Gagal menyalin link'); }
-    });
-
-    $('btnWA').addEventListener('click', () => { const url = location.href; const text = 'Cek profil RandomUser ini:'; const wa = `https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`; window.open(wa, '_blank', 'noopener'); });
-
-    $('btnRefresh').addEventListener('click', () => loadUser({ mode: 'online' }));
-    $('btnOffline').addEventListener('click', () => loadUser({ mode: 'offline', offlineIndex: Date.now() }));
-
-    // Theme toggle & persist
-    const THEME_KEY = 'ru_theme'; const NAT_KEY = 'ru_nat';
-    function applyTheme(theme){ document.documentElement.classList.toggle('dark', theme==='dark'); localStorage.setItem(THEME_KEY, theme); }
-    $('btnTheme').addEventListener('click', () => { const cur = localStorage.getItem(THEME_KEY) || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); applyTheme(cur==='dark'?'light':'dark'); });
-    applyTheme(localStorage.getItem(THEME_KEY) || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
-
-    // NAT select persist + URL sync
-    const natSel = $('natSelect');
-    function loadNatFromURL(){ const p = new URLSearchParams(location.search); return p.get('nat') || localStorage.getItem(NAT_KEY) || ''; }
-    function saveNatToURL(val){ const p = new URLSearchParams(location.search); if (val) p.set('nat', val); else p.delete('nat'); const url = `${location.pathname}?${p.toString()}`.replace(/\?$/, ''); history.replaceState(null, '', url); }
-    function applyNat(val){ if (!natSel) return; natSel.value = val; localStorage.setItem(NAT_KEY, val); saveNatToURL(val); }
-    if (natSel) {
-      const initNat = loadNatFromURL(); applyNat(initNat);
-      natSel.addEventListener('change', () => { applyNat(natSel.value); loadUser({ mode: 'online' }); });
-    }
-
-    // Shortcuts
-    window.addEventListener('keydown', (e) => { const k=e.key.toLowerCase(); if(k==='r'){e.preventDefault(); loadUser({ mode:'online' });} if(k==='o'){e.preventDefault(); loadUser({ mode:'offline', offlineIndex: Date.now() });} if(k==='t'){e.preventDefault(); $('btnTheme').click(); } });
-
-    // Self Tests (no network) — extended with badge & NAT tests
-    function selfTest() {
-      const logs = []; const t=(name,fn)=>{ try{ fn(); logs.push('✅ '+name);}catch(e){ logs.push('❌ '+name+' — '+e.message);} };
-      const d1 = getUserOffline(0); render(d1);
-      t('Nama terisi (TC1)', () => { if (!$('name').textContent.trim()) throw new Error('kosong'); });
-      t('UUID ada (TC1)', () => { if (!$('uuid').textContent.trim()) throw new Error('uuid kosong'); });
-      t('Badge gender & umur tampil (TC1)', () => { if ($('genderBadge').classList.contains('hidden')||$('ageBadge').classList.contains('hidden')) throw new Error('badge tidak tampil'); });
-      const d2 = getUserOffline(1); render(d2);
-      t('Phone tampil meski cell kosong (TC2)', () => { if (!$('phone').textContent.includes('+1-206')) throw new Error('phone tidak tampil'); });
-      t('Nationality sesuai (TC2)', () => { if ($('nat').textContent.trim() !== 'US') throw new Error('nat mismatch'); });
-      const d3 = getUserOffline(2); render(d3);
-      t('Tetap render tanpa NAT & foto (TC3)', () => { if (!$('name').textContent.toLowerCase().includes('siti')) throw new Error('render gagal'); });
-      // NAT selector test (no network): set to GB and ensure value reflects
-      if (natSel) { natSel.value = 'GB'; applyNat('GB'); t('NAT selector berubah ke GB', () => { if (natSel.value !== 'GB') throw new Error('nat select gagal'); }); }
-      t('Raw JSON tersedia', () => { if (!$('raw').textContent.includes('results')) throw new Error('raw kosong'); });
-      alert('Self‑Test results:\n'+logs.join('\n'));
-    }
-    $('btnSelfTest').addEventListener('click', selfTest);
-
-    // Init
-    loadUser({ mode: 'auto' });
-  </script>
-</body>
-</html>
+      const N = 140; const parts = Array.from({length:N}, () => ({ x: Math.random()*W, y: -20-Math.random()*H*0.2, r: 4+Math.random()*3, s: 1+Math.random()*2, c: `hsl(${Math.random()
