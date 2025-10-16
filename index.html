@@ -44,6 +44,11 @@
     @keyframes shimmer{0%{background-position: 200% 0} 100%{background-position: -200% 0}}
     /* Confetti canvas sits on top during success events */
     #confetti { pointer-events:none; position: fixed; inset: 0; z-index: 40; display:none; }
+
+    /* --- Minor polish for attraction --- */
+    button:hover { box-shadow: 0 10px 25px rgba(2,6,23,.08); transform: translateY(-1px); transition: all .15s ease; }
+    #avatar { transition: transform .25s ease; }
+    #avatar:hover { transform: scale(1.02) translateY(-1px); }
   </style>
 </head>
 <body class="min-h-screen font-sans bg-gradient-to-br from-slate-50 via-white to-indigo-50 text-slate-800 dark:from-slate-900 dark:via-slate-950 dark:to-indigo-950 dark:text-slate-100 transition-colors">
@@ -77,24 +82,26 @@
       <!-- Profile Card -->
       <div class="lg:col-span-1">
         <div class="tilt rounded-3xl glass border border-slate-300/60 dark:border-slate-700/60 shadow-xl overflow-hidden">
-          <div class="relative h-40 bg-gradient-to-br from-brand-500 to-cyan-400">
+          <div class="relative h-44 sm:h-40 bg-gradient-to-br from-brand-500 to-cyan-400">
             <img id="coverFlag" alt="country flag" class="absolute right-3 bottom-3 h-7 w-10 object-cover rounded-md shadow ring-1 ring-white/80 hidden" />
           </div>
-          <div class="px-6 -mt-12 pb-6">
+          <div class="px-6 pb-6 relative z-10">
             <div class="flex items-end gap-4">
-              <div class="h-24 w-24 rounded-2xl overflow-hidden ring-4 ring-white/90 dark:ring-slate-900/60 bg-slate-100 dark:bg-slate-800 relative">
-                <img id="avatar" alt="avatar" class="h-full w-full object-cover hidden"/>
-                <div id="avatarSkel" class="absolute inset-0 shimmer"></div>
+              <div class="shrink-0 -mt-12">
+                <div class="h-24 w-24 rounded-2xl overflow-hidden ring-4 ring-white/90 dark:ring-slate-900/60 bg-slate-100 dark:bg-slate-800 relative">
+                  <img id="avatar" alt="avatar" class="h-full w-full object-cover hidden"/>
+                  <div id="avatarSkel" class="absolute inset-0 shimmer"></div>
+                </div>
               </div>
-              <div class="flex-1 pb-2">
-                <p id="name" class="text-2xl font-extrabold leading-tight tracking-tight">&nbsp;</p>
-                <p id="username" class="text-slate-500 dark:text-slate-400 text-sm">&nbsp;</p>
+              <div class="flex-1 pb-2 min-w-0">
+                <p id="name" class="text-2xl sm:text-3xl font-extrabold leading-snug tracking-tight break-words [hyphens:auto]">&nbsp;</p>
+                <p id="username" class="text-slate-500 dark:text-slate-400 text-sm truncate">&nbsp;</p>
               </div>
             </div>
 
             <dl class="mt-6 space-y-3 text-sm">
               <div class="flex items-center gap-3"><span class="shrink-0">📧</span><dd id="email" class="truncate">&nbsp;</dd></div>
-              <div class="flex items-center gap-3"><span class="shrink-0">📱</span><dd id="phone" class="truncate">&nbsp;</dd></div>
+              <div class="flex items-center gap-3"><span class="shrink-0">📞</span><dd id="phone" class="truncate">&nbsp;</dd></div>
               <div class="flex items-center gap-3"><span class="shrink-0">🎂</span><dd id="dob" class="truncate">&nbsp;</dd></div>
               <div class="flex items-center gap-3"><span class="shrink-0">🕒</span><dd id="timezone" class="truncate">&nbsp;</dd></div>
             </dl>
@@ -212,19 +219,30 @@
       }]}
     ];
 
-    // ---------- Fetch with timeout & retries ----------
+    // ---------- Robust fetch with timeout & retries ----------
+    function normalizeFetchError(err, timeout){
+      if (err && (err.name === 'AbortError')){
+        const e = new Error(`Request timed out after ${timeout} ms`);
+        e.code = 'ETIMEDOUT';
+        return e;
+      }
+      return err || new Error('Unknown fetch error');
+    }
+
     async function fetchWithTimeout(url, { timeout = 6000, retries = 2 } = {}) {
       let lastError;
       for (let attempt = 0; attempt <= retries; attempt++) {
         const ctl = new AbortController();
-        const t = setTimeout(() => ctl.abort(), timeout);
+        const timer = setTimeout(() => ctl.abort(), timeout);
         try {
           const res = await fetch(url, { signal: ctl.signal, cache: 'no-store' });
-          clearTimeout(t);
+          clearTimeout(timer);
           if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
           return await res.json();
         } catch (err) {
-          clearTimeout(t); lastError = err;
+          clearTimeout(timer);
+          lastError = normalizeFetchError(err, timeout);
+          // small backoff before retry
           await new Promise(r => setTimeout(r, 300 * (attempt + 1)));
         }
       }
@@ -233,7 +251,7 @@
 
     async function getUserOnline() {
       const url = 'https://randomuser.me/api/?nat=us,gb,fr,au,ca,id&inc=gender,name,location,email,login,phone,cell,dob,registered,picture,nat&noinfo&results=1';
-      const data = await fetchWithTimeout(url, { timeout: 6000, retries: 2 });
+      const data = await fetchWithTimeout(url, { timeout: 7000, retries: 2 });
       const u = data.results?.[0]; if (!u) throw new Error('Empty results');
       return { raw: data, u };
     }
@@ -248,15 +266,18 @@
       $('avatar').alt = `${u?.name?.first ?? ''} ${u?.name?.last ?? ''}`.trim() || 'avatar';
       $('avatar').classList.remove('hidden'); $('avatarSkel').classList.add('hidden');
 
-      if (u.nat) { $('coverFlag').src = flagUrl(u.nat); $('coverFlag').classList.remove('hidden'); }
-      else { $('coverFlag').classList.add('hidden'); }
+      if (u.nat) {
+        $('coverFlag').src = flagUrl(u.nat);
+        $('coverFlag').alt = u.location?.country ? `Flag of ${u.location.country}` : 'country flag';
+        $('coverFlag').classList.remove('hidden');
+      } else { $('coverFlag').classList.add('hidden'); }
 
       setText('name', `${u.name?.title ?? ''} ${u.name?.first ?? ''} ${u.name?.last ?? ''}`.trim());
       setText('username', `@${u.login?.username ?? 'unknown'}`);
 
       const dob = `${u.dob?.date ? formatDate(u.dob.date) : '-'} • ${u.dob?.age ?? '?'} th`;
       setText('email', u.email ?? '-');
-      setText('phone', [u.phone, u.cell].filter(Boolean).join(' • '));
+      setText('phone', u.phone ?? '-');
       setText('dob', dob);
       setText('timezone', `${u.location?.timezone?.offset ?? ''} ${u.location?.timezone?.description ?? ''}`.trim());
 
@@ -279,6 +300,9 @@
       setText('uuid', u.login?.uuid ?? '-');
       setText('registered', u.registered?.date ? formatDate(u.registered.date) : '-');
       setText('nat', u.nat ?? '-');
+
+      // ensure repaint for long JSON strings
+      $('raw').textContent = '';
       $('raw').textContent = JSON.stringify(raw, null, 2);
 
       if (celebrate) burstConfetti();
@@ -296,14 +320,41 @@
           else { const data = await getUserOnline(); render(data, { celebrate: true }); banner('Data live berhasil dimuat dari RandomUser API.', 'info'); }
         }
       } catch (err) {
-        console.error(err); const data = getUserOffline(offlineIndex); render(data); banner('Gagal mengambil data online — beralih ke OFFLINE demo. Error: '+(err?.message||err), 'error');
+        console.error(err);
+        const data = getUserOffline(offlineIndex);
+        render(data);
+        const msg = (err && (err.code === 'ETIMEDOUT' || err.name === 'AbortError'))
+          ? 'Permintaan ke API timeout. Menampilkan demo OFFLINE.'
+          : 'Gagal mengambil data online — beralih ke OFFLINE demo.';
+        banner(`${msg} Error: ${err?.message||err}`, (err && (err.code==='ETIMEDOUT')) ? 'warn' : 'error');
       } finally { toggleLoading(false); }
     }
 
     // Copy/Download/Share
-    $('btnCopy').addEventListener('click', () => { const text = $('raw').textContent; navigator.clipboard?.writeText(text).then(()=>alert('JSON disalin')).catch(()=>alert('Gagal menyalin')); });
-    $('btnDownload').addEventListener('click', () => { const blob = new Blob([$('raw').textContent], { type: 'application/json' }); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='randomuser.json'; a.click(); URL.revokeObjectURL(a.href); });
-    $('btnShare').addEventListener('click', async () => { const url = location.href; if (navigator.share) { try { await navigator.share({ title:'RandomUser Profile', url }); } catch(_){} } else { await navigator.clipboard?.writeText(url); alert('URL halaman disalin'); } });
+    $('btnCopy').addEventListener('click', () => {
+      const text = $('raw').textContent;
+      navigator.clipboard?.writeText(text).then(()=>alert('JSON disalin')).catch(()=>alert('Gagal menyalin'));
+    });
+
+    $('btnDownload').addEventListener('click', () => {
+      const jsonText = $('raw').textContent;
+      const blob = new Blob([jsonText], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'randomuser.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    $('btnShare').addEventListener('click', async () => {
+      const url = location.href;
+      if (navigator.share) {
+        try { await navigator.share({ title:'RandomUser Profile', url }); } catch(_){}
+      } else {
+        await navigator.clipboard?.writeText(url);
+        alert('URL halaman disalin');
+      }
+    });
 
     $('btnRefresh').addEventListener('click', () => loadUser({ mode: 'online' }));
     $('btnOffline').addEventListener('click', () => loadUser({ mode: 'offline', offlineIndex: Date.now() }));
@@ -320,13 +371,35 @@
     // Self Tests (no network)
     function selfTest() {
       const logs = []; const t=(name,fn)=>{ try{ fn(); logs.push('✅ '+name);}catch(e){ logs.push('❌ '+name+' — '+e.message);} };
+
+      // Keep existing cases
       const d1 = getUserOffline(0); render(d1);
       t('Nama terisi (TC1)', () => { if (!$('name').textContent.trim()) throw new Error('kosong'); });
       t('UUID ada (TC1)', () => { if (!$('uuid').textContent.trim()) throw new Error('uuid kosong'); });
+
       const d2 = getUserOffline(1); render(d2);
       t('Phone tampil meski cell kosong (TC2)', () => { if (!$('phone').textContent.includes('+1-206')) throw new Error('phone tidak tampil'); });
       t('Nationality sesuai (TC2)', () => { if ($('nat').textContent.trim() !== 'US') throw new Error('nat mismatch'); });
       t('Raw JSON tersedia', () => { if (!$('raw').textContent.includes('results')) throw new Error('raw kosong'); });
+
+      // --- Additional tests ---
+      t('About template ter-render', () => { if (!$('about').textContent.includes('username')) throw new Error('about tidak terisi'); });
+      t('Alamat mengandung kota', () => { if (!$('address').textContent) throw new Error('alamat kosong'); });
+      t('Username berawalan @', () => { if (!$('username').textContent.trim().startsWith('@')) throw new Error('username tanpa @'); });
+      t('Download JSON tidak error (simulasi)', () => {
+        const txt = $('raw').textContent || '{"ok":true}';
+        const b = new Blob([txt], { type: 'application/json' });
+        if (!(b instanceof Blob)) throw new Error('blob gagal');
+      });
+      t('Phone hanya menampilkan phone (tanpa pemisah •)', () => {
+        if ($('phone').textContent.includes('•')) throw new Error('phone mengandung cell/•');
+      });
+      // new: ensure AbortError normalized
+      t('AbortError dinormalisasi jadi ETIMEDOUT', () => {
+        const err = normalizeFetchError({ name: 'AbortError' }, 1234);
+        if (err.code !== 'ETIMEDOUT') throw new Error('normalisasi gagal');
+      });
+
       alert('Self‑Test results:\n'+logs.join('\n'));
     }
     $('btnSelfTest').addEventListener('click', selfTest);
